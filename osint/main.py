@@ -1,20 +1,36 @@
-from rich import print
-import requests
-import typer
+from rich.console import Console
+from rich.text import Text
 
-response = requests.get("https://api.github.com")
-print(response.json())
+console = Console()
+ASCII_ART = """
+ ██████╗ ██╗  ██╗ ██████╗ ███████╗████████╗███╗   ███╗ █████╗ ██████╗ 
+██╔════╝ ██║  ██║██╔═══██╗██╔════╝╚══██╔══╝████╗ ████║██╔══██╗██╔══██╗
+██║  ███╗███████║██║   ██║███████╗   ██║   ██╔████╔██║███████║██████╔╝
+██║   ██║██╔══██║██║   ██║╚════██║   ██║   ██║╚██╔╝██║██╔══██║██╔═══╝ 
+╚██████╔╝██║  ██║╚██████╔╝███████║   ██║   ██║ ╚═╝ ██║██║  ██║██║     
+ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝     
+"""
 
-app = typer.Typer()
+def main():
+    console.print(ASCII_ART, style = "bold cyan")
+    while True:
+        console.print("\nWhat do you want to recon?", style="bold magenta")
+        console.print("1. IP\n2. Domain\n3. Email\n0. Exit\n", style="bold magenta")
 
-@app.command()
-def scan(ip: str = None, domain: str = None, email: str = None):
-    if ip:
-        print(f"Scanning IP: {ip}")
-    if domain:
-        print(f"Scanning domain: {domain}")
-    if email:
-        print(f"Scanning email: {email}")
-
+        choice = (input("Enter your choice: "))
+        if choice == "1":
+            target = input("Enter IP: ")
+            print(f"Running IP recon on {target}")
+        elif choice == "2":
+            target = input("Enter domain: ")
+            print(f"Running domain recon on {target}")
+        elif choice == "3":
+            target = input("Enter email: ")
+            print(f"Running email recon on {target}")
+        elif choice == "0":
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice.")
 if __name__ == "__main__":
-    app()
+    main()
