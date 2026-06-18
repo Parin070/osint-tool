@@ -1,5 +1,6 @@
 from rich.console import Console
 from rich.text import Text
+from rich.panel import Panel
 
 console = Console()
 ASCII_ART = """
@@ -12,7 +13,7 @@ ASCII_ART = """
 """
 
 def main():
-    console.print(ASCII_ART, style = "bold cyan")
+    console.print(Panel.fit(ASCII_ART, style = "bold cyan", title="[magenta]GhostMap v0.1[/magenta]", subtitle="[magenta]OSINT Recon Tool[/magenta]"))
     while True:
         console.print("\nWhat do you want to recon?", style="bold magenta")
         console.print("1. IP\n2. Domain\n3. Email\n0. Exit\n", style="bold magenta")
@@ -32,5 +33,6 @@ def main():
             break
         else:
             print("Invalid choice.")
+
 if __name__ == "__main__":
     main()
