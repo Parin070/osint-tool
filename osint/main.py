@@ -1,6 +1,8 @@
 from rich.console import Console
 from rich.text import Text
 from rich.panel import Panel
+from dotenv import load_dotenv
+from .modules.ip import IPRecon
 
 console = Console()
 ASCII_ART = """
@@ -12,6 +14,8 @@ ASCII_ART = """
  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝     
 """
 
+load_dotenv()
+
 def main():
     console.print(Panel.fit(ASCII_ART, style = "bold cyan", title="[magenta]GhostMap v0.1[/magenta]", subtitle="[magenta]OSINT Recon Tool[/magenta]"))
     while True:
@@ -22,6 +26,9 @@ def main():
         if choice == "1":
             target = input("Enter IP: ")
             print(f"Running IP recon on {target}")
+            recon = IPRecon(target)
+            recon.run()
+            recon.summarize()
         elif choice == "2":
             target = input("Enter domain: ")
             print(f"Running domain recon on {target}")
