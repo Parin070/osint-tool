@@ -39,3 +39,14 @@ class IPRecon(Recon):
             "Shodan": shodan_response,
             "VirusTotal": vt_response
         }
+        self.calculate_risk()
+    
+    def calculate_risk(self):
+        abuse_score = self.results["AbuseIPDB"]["data"]["abuseConfidenceScore"]
+        vt_stats = self.results["VirusTotal"]["data"]["attributes"]["last_analysis_stats"]
+        #error in vt stats 
+        vt_score = (vt_stats["malicious"]/sum(vt_stats.values())) * 100
+        shodan_score = 100 if self.results["Shodan"].get("vulns") else 0
+
+        risk_score = (abuse_score + vt_score + shodan_score)/3
+        self.results["risk_score"] = round(risk_score, 2)
