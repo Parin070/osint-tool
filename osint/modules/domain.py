@@ -19,10 +19,13 @@ class DomainRecon(Recon):
         txt_list = [ip.to_text() for ip in txt_records]
 
         #crt.sh
-        response = requests.get(f"https://crt.sh/?q={self.target}&output=json").json()
-        subdomains = set()
-        for entry in response:
-            subdomains.add(entry["name_value"]) 
+        try:
+            response = requests.get(f"https://crt.sh/?q={self.target}&output=json").json()
+            subdomains = set()
+            for entry in response:
+                subdomains.add(entry["name_value"])
+        except Exception:
+            subdomains = set()
 
         #VirusTotal
         url_vt = f"https://www.virustotal.com/api/v3/domains/{self.target}"

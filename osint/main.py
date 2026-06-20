@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from .modules.ip import IPRecon
 from .modules.domain import DomainRecon
 from .output.terminal import display_ip_results
+from .output.terminal import display_domain_results
 
 console = Console()
 ASCII_ART = """
@@ -36,7 +37,7 @@ def main():
             print(f"Running domain recon on {target}")
             recon = DomainRecon(target)
             recon.run()
-            recon.summarize()
+            display_domain_results(recon.results)
         elif choice == "3":
             target = input("Enter email: ")
             print(f"Running email recon on {target}")
