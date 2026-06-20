@@ -1,6 +1,7 @@
 from .base import Recon
 import whois
 import dns.resolver
+import requests
 
 class DomainRecon(Recon):
 
@@ -16,6 +17,12 @@ class DomainRecon(Recon):
         mx_list = [ip.to_text() for ip in mx_records]
         txt_list = [ip.to_text() for ip in txt_records]
 
+        #crt.sh
+        response = requests.get(f"https://crt.sh/?q={self.target}&output=json").json()
+        subdomains = set()
+        for entry in response:
+            subdomains.add(entry["name_value"]) 
+
         self.results = {
             "Whois": {
                 "Registrar": who.registrar,
@@ -27,5 +34,6 @@ class DomainRecon(Recon):
                 "A": a_list,
                 "MX": mx_list,
                 "TXT": txt_list
-            }
+            },
+            "Subdomains": list(subdomains)
         }
