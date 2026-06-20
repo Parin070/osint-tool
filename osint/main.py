@@ -3,6 +3,7 @@ from rich.text import Text
 from rich.panel import Panel
 from dotenv import load_dotenv
 from .modules.ip import IPRecon
+from .modules.domain import DomainRecon
 from .output.terminal import display_ip_results
 
 console = Console()
@@ -33,6 +34,9 @@ def main():
         elif choice == "2":
             target = input("Enter domain: ")
             print(f"Running domain recon on {target}")
+            recon = DomainRecon(target)
+            recon.run()
+            recon.summarize()
         elif choice == "3":
             target = input("Enter email: ")
             print(f"Running email recon on {target}")
