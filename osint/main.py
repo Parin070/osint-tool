@@ -3,6 +3,7 @@ from rich.text import Text
 from rich.panel import Panel
 from dotenv import load_dotenv
 from .modules.ip import IPRecon
+from .output.terminal import display_ip_results
 
 console = Console()
 ASCII_ART = """
@@ -28,7 +29,7 @@ def main():
             print(f"Running IP recon on {target}")
             recon = IPRecon(target)
             recon.run()
-            recon.summarize()
+            display_ip_results(recon.results)
         elif choice == "2":
             target = input("Enter domain: ")
             print(f"Running domain recon on {target}")
