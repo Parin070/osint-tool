@@ -3,10 +3,30 @@ from shodan import Shodan
 import os
 import requests
 import json
+import aiohttp
+import asyncio
 
 class IPRecon(Recon):
 
-    def run(self):
+    async def run(self):
+        async with aiohttp.ClientSession() as session:
+            abuse_task = self.fetch_abuseipdb(session)
+            vt_task = self.fetch_virustotal(session)
+            abuse_response, vt_response = await asyncio.gather(abuse_task, vt_task)
+
+        #Shodan
+        api = Shodan(os.getenv("SHODAN"))
+        shodan_response = api.host(self.target)
+        
+        self.results = {
+            "AbuseIPDB": abuse_response,
+            "Shodan": shodan_response,
+            "VirusTotal": vt_response
+        }
+        self.calculate_risk()
+        
+        
+    async def fetch_abuseipdb(self, session):
         #AbuseIPDB
         url_ab = 'https://api.abuseipdb.com/api/v2/check'
 
@@ -19,12 +39,10 @@ class IPRecon(Recon):
             'Accept': 'application/json',
             'Key': os.getenv("ABUSEIPDB")
         }
-        abuse_response = requests.get(url_ab, headers=headers_ab, params=querystring).json()
-
-        #Shodan
-        api = Shodan(os.getenv("SHODAN"))
-        shodan_response = api.host(self.target)
+        async with session.get(url_ab, headers=headers_ab, params=querystring) as resp:
+            return await resp.json()
         
+    async def fetch_virustotal(self, session):
         #VirusTotal
         url_vt = f"https://www.virustotal.com/api/v3/ip_addresses/{self.target}"
         headers_vt = {
@@ -32,15 +50,9 @@ class IPRecon(Recon):
             "x-apikey": os.getenv("VIRUSTOTAL")
         }
 
-        vt_response = requests.get(url_vt, headers=headers_vt).json()
+        async with session.get(url_vt, headers=headers_vt) as resp:
+            return await resp.json()
 
-        self.results = {
-            "AbuseIPDB": abuse_response,
-            "Shodan": shodan_response,
-            "VirusTotal": vt_response
-        }
-        self.calculate_risk()
-    
     def calculate_risk(self):
         abuse_score = self.results["AbuseIPDB"]["data"]["abuseConfidenceScore"]
         vt_stats = self.results["VirusTotal"]["data"]["attributes"]["last_analysis_stats"] 

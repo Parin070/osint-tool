@@ -2,6 +2,7 @@ from rich.console import Console
 from rich.text import Text
 from rich.panel import Panel
 from dotenv import load_dotenv
+import asyncio
 from .modules.ip import IPRecon
 from .modules.domain import DomainRecon
 from .modules.email import EmailRecon
@@ -32,7 +33,7 @@ def main():
             target = input("Enter IP: ")
             print(f"Running IP recon on {target}")
             recon = IPRecon(target)
-            recon.run()
+            asyncio.run(recon.run())
             display_ip_results(recon.results)
         elif choice == "2":
             target = input("Enter domain: ")
