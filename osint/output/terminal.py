@@ -129,3 +129,38 @@ def display_domain_results(results):
     table_rs.add_row("Risk Score", str(results["risk_score"]))
 
     console.print(table_rs)
+
+def display_email_results(results):
+    print("Email Report")
+    if "error" in results:
+        console.print(f"[red]{results['error']}[/red]")
+        return
+    
+    #Hudson Rock
+    table_hr = Table(title="Huson Rock")
+    table_hr.add_column("Field", justify="center", style="cyan")
+    table_hr.add_column("Value", justify="center", style="magenta")
+
+    hr = results["Hudson Rock"]
+    table_hr.add_row("Total User Services", str(hr.get("total_user_services", 0)))
+    table_hr.add_row("Total Corporate Services", str(hr.get("total_corporate_services", 0)))
+    table_hr.add_row("Infections Found", str(len(hr.get("stealers", []))))
+    
+    if hr.get("stealers"):
+        latest = hr["stealers"][0]
+        table_hr.add_row("Most Recent Infection", latest.get("date_compromised", "N/A"))
+        table_hr.add_row("Computer Name", latest.get("computer_name", "N/A"))
+        table_hr.add_row("OS", latest.get("operating_system", "N/A"))
+    
+    console.print(table_hr)
+
+    print()
+
+    # Risk Score
+    table_rs = Table(title="Risk Score")
+    table_rs.add_column("Field", justify="center", style="cyan")
+    table_rs.add_column("Value", justify="center", style="magenta")
+
+    table_rs.add_row("Risk Score", str(results["risk_score"]))
+
+    console.print(table_rs)

@@ -4,8 +4,10 @@ from rich.panel import Panel
 from dotenv import load_dotenv
 from .modules.ip import IPRecon
 from .modules.domain import DomainRecon
+from .modules.email import EmailRecon
 from .output.terminal import display_ip_results
 from .output.terminal import display_domain_results
+from .output.terminal import display_email_results
 
 console = Console()
 ASCII_ART = """
@@ -41,6 +43,9 @@ def main():
         elif choice == "3":
             target = input("Enter email: ")
             print(f"Running email recon on {target}")
+            recon = EmailRecon(target)
+            recon.run()
+            display_email_results(recon.results)
         elif choice == "0":
             print("Exiting...")
             break
