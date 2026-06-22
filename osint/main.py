@@ -9,6 +9,7 @@ from .modules.email import EmailRecon
 from .output.terminal import display_ip_results
 from .output.terminal import display_domain_results
 from .output.terminal import display_email_results
+from .ai import summarize
 
 console = Console()
 ASCII_ART = """
@@ -35,18 +36,24 @@ def main():
             recon = IPRecon(target)
             asyncio.run(recon.run())
             display_ip_results(recon.results)
+            summary = summarize(recon.results)
+            print(summary["choices"][0]["message"]["content"])
         elif choice == "2":
             target = input("Enter domain: ")
             print(f"Running domain recon on {target}")
             recon = DomainRecon(target)
             recon.run()
             display_domain_results(recon.results)
+            summary = summarize(recon.results)
+            print(summary["choices"][0]["message"]["content"])
         elif choice == "3":
             target = input("Enter email: ")
             print(f"Running email recon on {target}")
             recon = EmailRecon(target)
             recon.run()
             display_email_results(recon.results)
+            summary = summarize(recon.results)
+            print(summary["choices"][0]["message"]["content"])
         elif choice == "0":
             print("Exiting...")
             break
