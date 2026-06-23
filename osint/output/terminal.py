@@ -164,3 +164,12 @@ def display_email_results(results):
     table_rs.add_row("Risk Score", str(results["risk_score"]))
 
     console.print(table_rs)
+
+def display_people_results(results):
+    table = Table(title="Profiles")
+    table.add_column("Platform", style="cyan")
+    
+    for profile in results["Sherlock"]["Profiles"]:
+        table.add_row(profile)
+    
+    console.print(table)
