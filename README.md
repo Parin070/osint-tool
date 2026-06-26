@@ -63,8 +63,8 @@ osint/
 
 ```bash
 # Clone
-git clone https://github.com/Parin070/osint-tool.git
-cd osint-tool
+git clone https://github.com/Parin070/GhostMap.git
+cd GhostMap
 
 # Create venv
 python3 -m venv .venv
