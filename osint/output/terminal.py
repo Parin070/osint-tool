@@ -167,9 +167,18 @@ def display_email_results(results):
 
 def display_people_results(results):
     table = Table(title="Profiles")
-    table.add_column("Platform", style="cyan")
-    
-    for profile in results["Sherlock"]["Profiles"]:
-        table.add_row(profile)
-    
+    table.add_column("Profile URL", style="cyan")
+
+    if "Sherlock" in results:
+        data = results["Sherlock"]
+        table.title = f"Sherlock — {data['Username']}"
+        for profile in data["Profiles"]:
+            table.add_row(profile)
+
+    elif "NameDork" in results:
+        data = results["NameDork"]
+        table.title = f"Name Search — {data['Full Name']}"
+        for profile in data["Profiles"]:
+            table.add_row(profile)
+
     console.print(table)

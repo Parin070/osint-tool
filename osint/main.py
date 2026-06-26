@@ -58,7 +58,7 @@ def main():
             summary = summarize(recon.results)
             console.print(Markdown(summary["choices"][0]["message"]["content"]))
         elif choice == "4":
-            target = input("Enter username: ")
+            target = input("Enter username or full name: ")
             print(f"Running recon on {target}")
             recon = PeopleRecon(target)
             recon.run()
