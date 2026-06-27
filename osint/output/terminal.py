@@ -77,8 +77,31 @@ def display_domain_results(results):
     table_wh.add_row("Creation Date", str(results["Whois"]["Creation Date"]))
     table_wh.add_row("Expiration Date", str(results["Whois"]["Expiration Date"]))
     table_wh.add_row("Name Servers", str(results["Whois"]["Name Servers"]))
+    table_wh.add_row("Organisation", str(results["Whois"]["Org"]))
 
     console.print(table_wh)
+    if "Company" in results:
+        print()
+        table_co = Table(title="Company Intel")
+        table_co.add_column("Field", justify="center", style="cyan")
+        table_co.add_column("Value", justify="center", style="magenta")
+
+        co = results["Company"]
+        if "error" in co:
+            table_co.add_row("Status", f"[red]{co['error']}[/red]")
+        else:
+            table_co.add_row("Name", str(co["Name"]))
+            table_co.add_row("Status", str(co["Status"]))
+            table_co.add_row("Jurisdiction", str(co["Jurisdiction"]))
+            table_co.add_row("Category", str(co["Category"]))
+            table_co.add_row("Country", str(co["Country"]))
+            table_co.add_row("HQ City", str(co["HQ City"]))
+            table_co.add_row("LEI Status", str(co["LEI Status"]))
+            table_co.add_row("Last Updated", str(co["Last Updated"]))
+            table_co.add_row("Next Renewal", str(co["Next Renewal"]))
+            table_co.add_row("Corroboration", str(co["Corroboration"]))
+
+        console.print(table_co)
 
     print()
 
@@ -119,7 +142,7 @@ def display_domain_results(results):
 
     console.print(table_vt)
 
-    print()
+    print()    
 
     # Risk Score
     table_rs = Table(title="Risk Score")

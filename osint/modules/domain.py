@@ -3,6 +3,7 @@ import whois
 import dns.resolver
 import requests
 import os
+import re
 
 class DomainRecon(Recon):
 
@@ -39,6 +40,7 @@ class DomainRecon(Recon):
         self.results = {
             "Whois": {
                 "Registrar": who.registrar,
+                "Org": who.org,
                 "Creation Date": who.creation_date,
                 "Expiration Date": who.expiration_date,
                 "Name Servers": who.name_servers
@@ -52,8 +54,58 @@ class DomainRecon(Recon):
             "VirusTotal": vt_response
         }
         self.calculate_risk()
+        self._run_company_check()
 
     def calculate_risk(self):
         vt_stats = self.results["VirusTotal"]["data"]["attributes"]["last_analysis_stats"]
         vt_score = (vt_stats["malicious"] / sum(vt_stats.values())) * 100
         self.results["risk_score"] = round(vt_score, 2)
+
+    def _run_company_check(self):
+        org = self.results["Whois"].get("Org")
+        if not org:
+            self.results["Company"] = {"error": "No org found in Whois"}
+            return
+
+        cleaned_org = self._clean_org(org)
+        
+        try:
+            response = requests.get(
+                "https://api.gleif.org/api/v1/lei-records",
+                params={
+                    "filter[entity.legalName]": cleaned_org,
+                    "page[size]": 1
+                },
+                headers={"Accept": "application/vnd.api+json"},
+                timeout=10
+            )
+            data = response.json()
+            records = data.get("data", [])
+
+            if not records:
+                self.results["Company"] = {"error": "No records found", "org": org}
+                return
+
+            top = records[0]["attributes"]["entity"]
+            reg = records[0]["attributes"]["registration"]
+
+            self.results["Company"] = {
+                "Name": top["legalName"]["name"],
+                "Status": top["status"],
+                "Jurisdiction": top.get("jurisdiction", "N/A"),
+                "Category": top.get("category", "N/A"),
+                "Country": top["legalAddress"]["country"],
+                "HQ City": top["headquartersAddress"].get("city", "N/A"),
+                "LEI Status": reg["status"],
+                "Last Updated": reg["lastUpdateDate"],
+                "Next Renewal": reg["nextRenewalDate"],
+                "Corroboration": reg["corroborationLevel"]
+            }
+
+        except Exception as e:
+            self.results["Company"] = {"error": str(e)}
+    
+    def _clean_org(self, org):
+        suffixes = r'\b(LLC|Inc\.?|Ltd\.?|Corp\.?|Co\.?|Limited|Incorporated|Corporation|GmbH|PLC|AG)\b'
+        cleaned = re.sub(suffixes, '', org, flags=re.IGNORECASE).strip().strip(',').strip()
+        return cleaned
