@@ -25,6 +25,9 @@ class DomainRecon(Recon):
             subdomains = set()
             for entry in response:
                 subdomains.add(entry["name_value"])
+            subdomains = list(subdomains)[:20]
+            for entry in response:
+                subdomains.add(entry["name_value"])
         except Exception:
             subdomains = set()
 
