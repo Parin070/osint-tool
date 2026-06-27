@@ -103,7 +103,31 @@ def display_domain_results(results):
 
         console.print(table_co)
 
+    if "FinancialDork" in results:
+        print()
+        table_fd = Table(title="Financial Intelligence")
+        table_fd.add_column("Title", style="cyan")
+        table_fd.add_column("Snippet", style="magenta")
+        table_fd.add_column("URL", style="green")
+
+        fd = results["FinancialDork"]
+        if "error" in fd:
+            table_fd.add_row("Error", fd["error"], "")
+        else:
+            for r in fd["Results"]:
+                if "error" in r:
+                    table_fd.add_row("Error", r["error"], "")
+                else:
+                    table_fd.add_row(
+                        str(r["title"]),
+                        str(r["snippet"]),
+                        str(r["url"])
+                    )
+
+        console.print(table_fd)
+
     print()
+
 
     #DNS
     table_dns = Table(title="DNS")
